@@ -1,0 +1,37 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "user1",
+      "password": "1"
+    },
+    {
+      "id": 2,
+      "username": "user2",
+      "password": "2"
+    }
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "idUser": 1,
+      "name": "Имя контакта 1",
+      "email": "email1@example.com",
+      "phone": "+1 123-456-7890"
+    },
+    {
+      "id": 2,
+      "idUser": 1,
+      "name": "Имя контакта 2",
+      "email": "email2@example.com",
+      "phone": "+1 987-654-3210"
+    },
+    {
+      "id": 3,
+      "idUser": 2,
+      "name": "Имя контакта 3",
+      "email": "email3@example.com",
+      "phone": "+1 555-555-5555"
+    }
+  ]
+}

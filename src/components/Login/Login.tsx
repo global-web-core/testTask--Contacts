@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import {Users} from '../../models';
 import { Button, TextField, Grid, Paper, Typography } from '@mui/material';
+import { useAppDispatch } from '../../store/hook';
+import {addUser, clearUser} from '../../store/user/user-actions';
+import { namePages, text } from '../../globals/constants/constants';
+import { changePage } from '../../store/page/page-actions';
 
 export const Login = (): JSX.Element => {
-  // const users = async () => {
-  //   const qqq = await Users.getAll();
-  //   console.log('===qqq', qqq)
-  //   const qqq2 = await Contacts.getAll();
-  //   console.log('===qqq2', qqq2)
-  // };
-  // users();
-
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -26,17 +23,26 @@ export const Login = (): JSX.Element => {
     event.preventDefault();
     
     if (!username || !password) {
-      alert('Пожалуйста, заполните все поля');
+      alert(text.fillFields);
       return;
     }
 
-    const user = await Users.getByUsernameAndPassword(username, password);
-    if (user.data?.length === 1) {
-
-      console.log('===user', user)
+    const userDb = await Users.getByUsernameAndPassword(username, password);
+    if (userDb.data?.length === 1) {
+      dispatch(addUser(userDb.data[0]));
+      dispatch(changePage(namePages.listContacts));
+      return;
     }
+
+    dispatch(clearUser());
+    alert(text.authIsNotCorrect);
   };
 
+  dispatch(addUser({
+    "id": 1,
+    "username": "user1",
+    "password": "1"
+  })); // TODO: DELETE
   
   return (
     <>
@@ -44,7 +50,7 @@ export const Login = (): JSX.Element => {
         <Grid item xs={12} sm={6} md={4}>
           <Paper style={{ padding: '20px' }}>
             <Typography variant="h5" component="h2">
-              Авторизация
+              {text.auth}
             </Typography>
             <form 
               noValidate 
@@ -55,7 +61,7 @@ export const Login = (): JSX.Element => {
               <div style={{ marginBottom: '20px' }}>
                 <TextField
                   fullWidth
-                  label="Имя пользователя"
+                  label={text.nameUser}
                   variant="outlined"
                   value={username}
                   onChange={handleUsernameChange}
@@ -65,7 +71,7 @@ export const Login = (): JSX.Element => {
               <div style={{ marginBottom: '20px' }}>
                 <TextField
                   fullWidth
-                  label="Пароль"
+                  label={text.password}
                   variant="outlined"
                   type="password"
                   value={password}
@@ -78,7 +84,7 @@ export const Login = (): JSX.Element => {
                 variant="contained"
                 type="submit"
               >
-                Войти
+                {text.login}
               </Button>
             </form>
           </Paper>

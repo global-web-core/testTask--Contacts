@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {ListContactsPage, LoginPage} from './pages';
 import { namePages } from './globals/constants/constants';
-import { Pages } from './typesAndInterfaces/types/basic.types';
+import { useAppSelector } from './store/hook';
+import { pageSelect } from './store/page/page-selectors';
 
 function App() {
-  const [page] = useState<Pages>(namePages.login);
+  const page = useAppSelector(pageSelect);
   useEffect(() => {
-    window.history.pushState(null, "", page);
+    window.history.pushState(null, "", page.current);
   },[page])
   return (
     <>
-      {page === namePages.login && <LoginPage />}
-      {page === namePages.listContacts && <ListContactsPage />}
+      {page.current === namePages.login && <LoginPage />}
+      {page.current === namePages.listContacts && <ListContactsPage />}
     </>
   );
 }

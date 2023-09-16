@@ -13,3 +13,10 @@ export interface Form {
 	email?: string;
 	phone?: string;
 }
+
+export interface Add {
+	idUser: number;
+	name: string;
+	email: string;
+	phone: string;
+}

@@ -37,12 +37,6 @@ export const Login = (): JSX.Element => {
     dispatch(clearUser());
     alert(text.authIsNotCorrect);
   };
-
-  dispatch(addUser({
-    "id": 1,
-    "username": "user1",
-    "password": "1"
-  })); // TODO: DELETE
   
   return (
     <>

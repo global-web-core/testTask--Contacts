@@ -5,6 +5,16 @@ export interface Get<ObjectFromDB extends TEntitiesDb.Objects> {
 	data: ObjectFromDB[] | undefined;
 }
 
+export interface Add<ObjectFromDB extends TEntitiesDb.Objects> {
+	code: TBasic.CodeAnswer;
+	data: ObjectFromDB | undefined;
+}
+
+export interface Delete {
+	code: TBasic.CodeAnswer;
+	data: Record<string, never> | undefined;
+}
+
 export interface RequestOptions {
 	method: TBasic.MethodHttp;
   headers: {

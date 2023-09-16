@@ -7,7 +7,7 @@ interface PageState {
 }
 
 const initialState: PageState = {
-  current: namePages.listContacts, // TODO: DELETE on login
+  current: namePages.login,
 };
 
 const pageReducer = (state = initialState, action: TPageAction): PageState => {

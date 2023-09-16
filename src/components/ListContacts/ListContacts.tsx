@@ -12,7 +12,7 @@ export const ListContacts = (): JSX.Element => {
   const [filteredContacts, setFilteredContacts] = useState<IContacts.Db[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const user = useAppSelector(userSelect);
-  const [currentContact, setCurrentContact] = useState<IContacts.Form | null>(null);
+  const [formContact, setFormContact] = useState<IContacts.Form | null>(null);
 
   const getFilteredConctacts = () => {
     return contacts.filter(contact => {
@@ -33,16 +33,45 @@ export const ListContacts = (): JSX.Element => {
     }
   }
 
-  const addContact = () => {
-    console.log('===addContact')
-    // После добавления или обновления контакта, получите все контакты заново
-    // await getAllContacts();
+  const addContact = async () => {
+    if (formContact?.name && formContact?.email && formContact?.phone && user?.data?.id) {
+      const dataContact = {
+        idUser: user?.data?.id,
+        name: formContact?.name,
+        email: formContact?.email,
+        phone: formContact?.phone,
+      }
+
+      const addedContact = await Contacts.add(dataContact);
+      if (addedContact.data) {
+        const newContacts = [...contacts, addedContact.data]
+        setContacts(newContacts);
+        setFormContact(null);
+        return;
+      }
+      alert(text.error);
+      return;
+    }
+
+    alert(text.fillFields);
   }
 
-  const updateContact = () => {
-    console.log('===updateContact')
-    // После добавления или обновления контакта, получите все контакты заново
-    // await getAllContacts();
+  const updateContact = async () => {
+    if (formContact?.name && formContact?.email && formContact?.phone && formContact?.id && formContact?.idUser) {
+      const updatedContact = await Contacts.update(formContact as IContacts.Db);
+      if (updatedContact.data) {
+        const newContacts = updatedContact.data
+        setContacts(prevContacts => {
+          return prevContacts.map(contact => 
+            contact.id === newContacts.id 
+              ? { ...contact, ...newContacts }
+              : contact
+          );
+        });
+        return;
+      }
+    }
+    alert(text.error);
   }
 
   useEffect(() => {
@@ -56,7 +85,7 @@ export const ListContacts = (): JSX.Element => {
 
   const handleAddOrUpdateContact = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (currentContact?.id) {
+    if (formContact?.id) {
       updateContact()
     } else {
       addContact()
@@ -64,12 +93,26 @@ export const ListContacts = (): JSX.Element => {
   };
 
   const handleChange = (field: string, value: string) => {
-    setCurrentContact(prev => ({ ...prev, [field]: value }));
+    setFormContact(prev => ({ ...prev, [field]: value }));
   };
 
   const handleEditClick = (id: number) => {
-    const currentContact = filteredContacts.find(contact => contact.id === id)
-    if (currentContact) setCurrentContact(currentContact);
+    const formContact = filteredContacts.find(contact => contact.id === id)
+    if (formContact) setFormContact(formContact);
+  };
+
+  const handleDeleteClick = async (id: number) => {
+    const deleteContact = filteredContacts.find(contact => contact.id === id)
+
+    if (deleteContact?.id) {
+      const deletedContact = await Contacts.removeById(deleteContact.id);
+      if (deletedContact.data && Object.keys(deletedContact.data).length === 0) {
+        const newContacts = contacts.filter(contact => contact.id !== deleteContact.id)
+        setContacts(newContacts);
+        return;
+      }
+    }
+    alert(text.error);
   };
   
 
@@ -92,7 +135,7 @@ export const ListContacts = (): JSX.Element => {
               <IconButton edge="end" onClick={() => handleEditClick(contact.id)}>
                 <Edit />
               </IconButton>
-              <IconButton edge="end">
+              <IconButton edge="end" onClick={() => handleDeleteClick(contact.id)}>
                 <Delete />
               </IconButton>
             </ListItemSecondaryAction>
@@ -111,19 +154,19 @@ export const ListContacts = (): JSX.Element => {
       <form style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
         onSubmit={handleAddOrUpdateContact} autoComplete="off" 
       >
-        <TextField label={text.name} value={currentContact?.name || ''}
+        <TextField label={text.name} value={formContact?.name || ''}
           onChange={(e) => handleChange('name', e.target.value)} fullWidth required />
-        <TextField label={text.email} value={currentContact?.email || ''}
+        <TextField label={text.email} value={formContact?.email || ''}
           onChange={(e) => handleChange('email', e.target.value)} fullWidth required />
-        <TextField label={text.phoneNumber} value={currentContact?.phone || ''}
+        <TextField label={text.phoneNumber} value={formContact?.phone || ''}
           onChange={(e) => handleChange('phone', e.target.value)} fullWidth required />
         <Button variant="contained" type="submit">
-          {currentContact?.id ? text.updateContact : text.addContact}
+          {formContact?.id ? text.updateContact : text.addContact}
         </Button>
-        {currentContact?.id && (
+        {formContact?.id && (
           <Button 
             variant="outlined" 
-            onClick={() => setCurrentContact(null)}
+            onClick={() => setFormContact(null)}
             style={{marginTop: '10px'}}
           >
             {text.cancelEdit}

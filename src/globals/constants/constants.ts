@@ -15,6 +15,7 @@ const text = {
  updateContact: "Обновить контакт",
  addContact: "Добавить контакт",
  cancelEdit: "Отменить редактирование",
+ error: "Что то пошло не так",
 }
 
 const enum namePages {
@@ -29,7 +30,9 @@ const enum controllers {
 
 const enum methodHttp {
 	get = "get",
-	post = "post"
+	post = "post",
+	delete = "delete",
+	put = "put"
 }
 
 const enum codeAnswer {

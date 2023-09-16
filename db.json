@@ -32,6 +32,20 @@
       "name": "Имя контакта 3",
       "email": "email3@example.com",
       "phone": "+1 555-555-5555"
+    },
+    {
+      "idUser": 1,
+      "name": "1dasd",
+      "email": "21rd",
+      "phone": "asfsf",
+      "id": 6
+    },
+    {
+      "idUser": 1,
+      "name": "ted",
+      "email": "fd",
+      "phone": "d",
+      "id": 7
     }
   ]
 }
